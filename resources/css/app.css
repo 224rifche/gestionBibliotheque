@@ -1,11 +1,180 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+[x-cloak] {
+    display: none !important;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* Animations personnalisées */
+@layer utilities {
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 0.5s ease-out;
+    }
+
+    .animate-scale-in {
+        animation: scaleIn 0.3s ease-out;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Styles personnalisés pour composants */
+@layer components {
+    /* Card moderne */
+    .card {
+        @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-gray-300/50 dark:hover:shadow-gray-900/70 hover:-translate-y-1;
+    }
+
+    /* Bouton moderne */
+    .btn-modern {
+        @apply px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-gray-200/50 dark:shadow-gray-900/50 hover:shadow-xl;
+    }
+
+    /* Input moderne */
+    .input-modern {
+        @apply w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 dark:focus:border-indigo-400 transition-all duration-200;
+        color: #111827 !important;
+        background-color: #ffffff !important;
+    }
+
+    .input-modern::placeholder {
+        color: #9ca3af !important;
+        opacity: 1 !important;
+    }
+
+    .input-modern:placeholder-shown {
+        color: #9ca3af !important;
+    }
+
+    select.input-modern {
+        color: #111827 !important;
+        background-color: #ffffff !important;
+    }
+
+    select.input-modern option {
+        color: #111827 !important;
+        background-color: #ffffff !important;
+    }
+
+    input[type="text"].input-modern,
+    input[type="password"].input-modern,
+    input[type="email"].input-modern,
+    textarea.input-modern {
+        color: #111827 !important;
+    }
+
+    /* Badge moderne */
+    .badge {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200;
+    }
+
+    /* Gradient moderne */
+    .gradient-primary {
+        @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600;
+    }
+
+    .gradient-success {
+        @apply bg-gradient-to-r from-emerald-500 to-teal-600;
+    }
+
+    .gradient-warning {
+        @apply bg-gradient-to-r from-amber-500 to-orange-600;
+    }
+
+    .gradient-danger {
+        @apply bg-gradient-to-r from-red-500 to-rose-600;
+    }
+
+    /* Glass effect */
+    .glass {
+        @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30;
+    }
+
+    /* Hover effect pour liens */
+    .link-hover {
+        @apply transition-all duration-200 hover:text-indigo-600 dark:hover:text-indigo-400;
+    }
+
+    /* Table moderne */
+    .table-modern {
+        @apply w-full text-sm text-left;
+    }
+
+    .table-modern thead {
+        @apply bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700;
+    }
+
+    .table-modern th {
+        @apply px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 uppercase text-xs tracking-wider;
+    }
+
+    .table-modern td {
+        @apply px-6 py-4 text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-800;
+    }
+
+    .table-modern tbody tr {
+        @apply transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/30;
+    }
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-900;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus visible amélioré */
+*:focus-visible {
+    @apply outline-none ring-2 ring-indigo-500/50 ring-offset-2 dark:ring-offset-gray-900;
 }
