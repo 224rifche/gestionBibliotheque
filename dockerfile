@@ -1,36 +1,40 @@
-# Utiliser une image PHP avec Apache
+# 1️⃣ Base PHP avec Apache
 FROM php:8.2-apache
 
-# Installer les extensions PHP nécessaires pour Laravel
+# 2️⃣ Installer extensions PHP pour Laravel
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Activer mod_rewrite pour Laravel
+# 3️⃣ Activer mod_rewrite
 RUN a2enmod rewrite
 
-# Copier le projet dans le conteneur
+# 4️⃣ Copier le projet
 COPY . /var/www/html
-
-# Définir le dossier public comme root
 WORKDIR /var/www/html
 
-# Permissions
+# 5️⃣ Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Modifier Apache pour pointer vers /public
+# 6️⃣ Modifier Apache pour pointer vers /public
 RUN sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
 
-# Installer Node.js pour le build Vite
+# 7️⃣ Installer Node.js pour Vite
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm
 
-# Installer les dépendances frontend
+# 8️⃣ Installer les dépendances front-end et builder Vite
 RUN npm install
 RUN npm run build
 
-# Exposer le port Render
+# 9️⃣ Installer Composer et dépendances PHP
+COPY composer.json composer.lock ./
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-dev --optimize-autoloader
+
+# 10️⃣ Exposer le port Render
 EXPOSE 10000
 
-# Lancer Apache
+# 11️⃣ Lancer Apache
 CMD ["apache2-foreground"]
