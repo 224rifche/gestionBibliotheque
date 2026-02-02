@@ -3,17 +3,46 @@ set -e
 
 echo "🚀 Début du build..."
 
+# Diagnostic des outils disponibles
+echo "🔍 Diagnostic des outils..."
+which node || echo "❌ Node.js non trouvé"
+which npm || echo "❌ NPM non trouvé"
+which php || echo "❌ PHP non trouvé"
+which composer || echo "❌ Composer non trouvé"
+
+echo "📦 Versions des outils :"
+node --version 2>/dev/null || echo "Node: non installé"
+npm --version 2>/dev/null || echo "NPM: non installé"
+php --version || echo "PHP: non installé"
+composer --version || echo "Composer: non installé"
+
 # Installation des dépendances PHP
 echo "📦 Installation de Composer..."
 composer install --no-dev --optimize-autoloader --no-interaction
 
 # Installation des dépendances Node
 echo "📦 Installation de NPM..."
-npm ci
+# Essayer npm ci, sinon npm install
+if npm ci 2>/dev/null; then
+    echo "✅ npm ci réussi"
+else
+    echo "⚠️ npm ci échoué, tentative avec npm install..."
+    npm install
+fi
 
 # Build des assets
 echo "🔨 Build Vite..."
-npm run build
+# Essayer différentes méthodes pour le build
+if npm run build 2>/dev/null; then
+    echo "✅ npm run build réussi"
+elif npx vite build 2>/dev/null; then
+    echo "✅ npx vite build réussi"
+else
+    echo "❌ Erreur: Impossible de builder les assets"
+    echo "📋 Contenu de package.json:"
+    cat package.json
+    exit 1
+fi
 
 # Vérification du build
 if [ ! -d "public/build" ]; then
