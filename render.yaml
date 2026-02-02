@@ -15,3 +15,5 @@ services:
         value: file
       - key: CACHE_DRIVER
         value: file
+      - key: APP_KEY
+        value: base64:dVt+awiXOXyIEgIHVcrlHHF30m/ky1K1Ip5WB1pO0IQ=
