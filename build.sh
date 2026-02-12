@@ -65,4 +65,8 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Migration de la base de données
+echo "🗄️ Migration de la base de données..."
+php artisan migrate --force
+
 echo "✅ Build terminé avec succès!"

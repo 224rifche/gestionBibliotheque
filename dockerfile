@@ -1,40 +1,47 @@
-# 1️⃣ Base PHP avec Apache
+# 1️⃣ Image PHP + Apache
 FROM php:8.2-apache
 
-# 2️⃣ Installer extensions PHP pour Laravel
-RUN docker-php-ext-install pdo pdo_mysql
+# 2️⃣ Dépendances système + PostgreSQL
+RUN apt-get update && apt-get install -y \
+    git unzip curl libpq-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip
 
 # 3️⃣ Activer mod_rewrite
 RUN a2enmod rewrite
 
-# 4️⃣ Copier le projet
-COPY . /var/www/html
-WORKDIR /var/www/html
-
-# 5️⃣ Permissions
-RUN chown -R www-data:www-data storage bootstrap/cache
-
-# 6️⃣ Modifier Apache pour pointer vers /public
+# 4️⃣ Apache vers /public
 RUN sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
 
-# 7️⃣ Installer Node.js pour Vite
+WORKDIR /var/www/html
+
+# 5️⃣ Copier fichiers dépendances d’abord (cache Docker)
+COPY composer.json composer.lock ./
+
+# 6️⃣ Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# 7️⃣ Installer dépendances PHP
+RUN composer install --no-dev --optimize-autoloader
+
+# 8️⃣ Node + npm
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm
 
-# 8️⃣ Installer les dépendances front-end et builder Vite
+# 9️⃣ Copier package.json + build front
+COPY package*.json ./
 RUN npm install
 RUN npm run build
 
-# 9️⃣ Installer Composer et dépendances PHP
-COPY composer.json composer.lock ./
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-dev --optimize-autoloader
+# 🔟 Copier tout le projet
+COPY . .
 
-# 10️⃣ Exposer le port Render
+# 1️⃣1️⃣ Permissions Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+# 1️⃣2️⃣ Port Render
 EXPOSE 10000
 
-# 11️⃣ Lancer Apache
+# 1️⃣3️⃣ Lancer Apache
 CMD ["apache2-foreground"]
