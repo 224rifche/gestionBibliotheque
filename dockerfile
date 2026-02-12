@@ -16,39 +16,37 @@ RUN sed -ri 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
 
-# 5️⃣ Copier fichiers dépendances d’abord (cache Docker)
+# 5️⃣ Copier composer.json et composer.lock d'abord (cache Docker)
 COPY composer.json composer.lock ./
 
 # 6️⃣ Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 7️⃣ Installer dépendances PHP
-RUN composer install --no-dev --optimize-autoloader
+# 7️⃣ Copier tout le code source
+COPY . .
 
-# 8️⃣ Node + npm
+# 8️⃣ Installer dépendances PHP (artisan existe maintenant)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
+# 9️⃣ Node + npm
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm
 
-# 9️⃣ Copier package.json + build front
-COPY package*.json ./
-RUN npm install
-RUN npm run build
+# 10️⃣ Build des assets
+RUN npm install && npm run build
 
-# 🔟 Copier tout le projet
-COPY . .
-
-# 1️⃣1️⃣ Variables d'environnement Laravel
+# 11️⃣ Variables d'environnement Laravel
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV APP_KEY=base64:dVt+awiXOXyIEgIHVcrlHHF30m/ky1K1Ip5WB1pO0IQ=
 
-# 1️⃣2️⃣ Permissions Laravel
+# 12️⃣ Permissions Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# 1️⃣2️⃣ Port Render
+# 13️⃣ Port Render
 EXPOSE 10000
 
-# 1️⃣3️⃣ Lancer Apache
+# 14️⃣ Lancer Apache
 CMD ["apache2-foreground"]
