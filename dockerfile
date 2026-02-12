@@ -43,6 +43,9 @@ ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV APP_KEY=base64:dVt+awiXOXyIEgIHVcrlHHF30m/ky1K1Ip5WB1pO0IQ=
 
+# 11️⃣1️⃣ Exécuter les migrations Laravel
+RUN php artisan migrate --force
+
 # 12️⃣ Permissions Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
