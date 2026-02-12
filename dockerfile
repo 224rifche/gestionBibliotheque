@@ -5,7 +5,6 @@ FROM php:8.2-apache
 RUN apt-get update && apt-get install -y \
     git unzip curl libpq-dev libzip-dev \
     gcc make autoconf pkg-config \
-    && docker-php-ext-configure pdo_pgsql --with-pgsql=/usr \
     && docker-php-ext-install pdo pdo_pgsql zip
 
 # 3️⃣ Activer mod_rewrite
