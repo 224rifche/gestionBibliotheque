@@ -2,10 +2,10 @@
 FROM php:8.2-apache
 
 # 2️⃣ Dépendances système pour PostgreSQL
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     git unzip curl \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    && docker-php-ext-install pdo pdo_pgsql zip || true
 
 # 3️⃣ Activer mod_rewrite Apache
 RUN a2enmod rewrite
