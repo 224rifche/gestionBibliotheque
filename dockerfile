@@ -4,6 +4,8 @@ FROM php:8.2-apache
 # 2️⃣ Dépendances système + PostgreSQL
 RUN apt-get update && apt-get install -y \
     git unzip curl libpq-dev libzip-dev \
+    gcc make autoconf pkg-config \
+    && docker-php-ext-configure pdo_pgsql --with-pgsql=/usr \
     && docker-php-ext-install pdo pdo_pgsql zip
 
 # 3️⃣ Activer mod_rewrite
@@ -37,8 +39,14 @@ RUN npm run build
 # 🔟 Copier tout le projet
 COPY . .
 
-# 1️⃣1️⃣ Permissions Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache
+# 1️⃣1️⃣ Variables d'environnement Laravel
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV APP_KEY=base64:dVt+awiXOXyIEgIHVcrlHHF30m/ky1K1Ip5WB1pO0IQ=
+
+# 1️⃣2️⃣ Permissions Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 # 1️⃣2️⃣ Port Render
 EXPOSE 10000
