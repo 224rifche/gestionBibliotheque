@@ -1,11 +1,11 @@
 # 1️⃣ Image PHP + Apache
 FROM php:8.2-apache
 
-# 2️⃣ Dépendances système pour PostgreSQL
+# 2️⃣ Dépendances système pour MySQL
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev \
+    default-mysql-client \
     git unzip curl \
-    && docker-php-ext-install pdo pdo_pgsql zip || true
+    && docker-php-ext-install pdo pdo_mysql zip || true
 
 # 3️⃣ Activer mod_rewrite Apache
 RUN a2enmod rewrite
@@ -42,9 +42,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV APP_KEY=base64:dVt+awiXOXyIEgIHVcrlHHF30m/ky1K1Ip5WB1pO0IQ=
-
-# 11️⃣1️⃣ Exécuter les migrations Laravel
-RUN php artisan migrate --force
 
 # 12️⃣ Permissions Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
